@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 Nullism - Worship the Sacred Zero</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">🌐 Nullism</h1>
+            <p class="subtitle">Worship the Sacred Zero</p>
+        </header>
+
+        <!-- Main Worship Area -->
+        <div class="worship-area">
+            <!-- Circular Path -->
+            <div class="orbit-path">
+                <svg class="orbit-svg" viewBox="0 0 400 400">
+                    <circle 
+                        cx="200" 
+                        cy="200" 
+                        r="150" 
+                        class="orbit-circle"
+                        fill="none"
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        stroke-width="2"
+                    />
+                </svg>
+                
+                <!-- Draggable Figure -->
+                <div class="worshipper" id="worshipper">
+                    <div class="figure">🧍</div>
+                </div>
+            </div>
+
+            <!-- Central Zero -->
+            <div class="sacred-zero" id="sacredZero">
+                <span class="zero-text">0</span>
+                <div class="zero-glow"></div>
+            </div>
+        </div>
+
+        <!-- Global Counter -->
+        <div class="counter-section">
+            <div class="counter-card">
+                <h2 class="counter-title">🌍 Global Orbits</h2>
+                <div class="counter-value" id="globalCounter">0</div>
+                <p class="counter-description">Total revolutions around the Sacred Zero</p>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <p>🔄 Drag the figure around the circle to complete an orbit</p>
+            <p>✨ Each full revolution contributes to the global count</p>
+            <div class="progress-indicator">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="orbitProgress"></div>
+                </div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,323 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Orbitron', monospace;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #00d4ff, #ff00ff, #00ff88);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease-in-out infinite;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #a0a0a0;
+    font-weight: 400;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Worship Area */
+.worship-area {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 40px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Orbit Path */
+.orbit-path {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.orbit-svg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.orbit-circle {
+    animation: orbitPulse 2s ease-in-out infinite;
+}
+
+@keyframes orbitPulse {
+    0%, 100% { 
+        stroke: rgba(255, 255, 255, 0.3);
+        stroke-width: 2;
+    }
+    50% { 
+        stroke: rgba(0, 212, 255, 0.6);
+        stroke-width: 3;
+    }
+}
+
+/* Sacred Zero */
+.sacred-zero {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.zero-text {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 20px #00d4ff;
+    animation: zeroGlow 2s ease-in-out infinite;
+    z-index: 12;
+    position: relative;
+}
+
+.zero-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
+    animation: glowPulse 3s ease-in-out infinite;
+    z-index: 11;
+}
+
+@keyframes zeroGlow {
+    0%, 100% { 
+        text-shadow: 0 0 20px #00d4ff;
+        transform: scale(1);
+    }
+    50% { 
+        text-shadow: 0 0 30px #00d4ff, 0 0 40px #00d4ff;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes glowPulse {
+    0%, 100% { 
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+/* Worshipper */
+.worshipper {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    cursor: grab;
+    transition: transform 0.1s ease;
+    z-index: 20;
+}
+
+.worshipper:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+}
+
+.figure {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    animation: figureBob 2s ease-in-out infinite;
+}
+
+@keyframes figureBob {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Counter Section */
+.counter-section {
+    margin: 40px 0;
+    width: 100%;
+    max-width: 400px;
+}
+
+.counter-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.counter-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #00d4ff;
+}
+
+.counter-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 20px #00d4ff;
+    margin-bottom: 10px;
+    animation: counterGlow 1s ease-in-out;
+}
+
+@keyframes counterGlow {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.counter-description {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+}
+
+/* Instructions */
+.instructions {
+    text-align: center;
+    margin: 30px 0;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+}
+
+.instructions p {
+    margin: 5px 0;
+}
+
+/* Progress Indicator */
+.progress-indicator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d4ff, #00ff88);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: #00d4ff;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    color: #000;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .title {
+        font-size: 2.5rem;
+    }
+    
+    .worship-area {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .sacred-zero {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .zero-text {
+        font-size: 3rem;
+    }
+    
+    .counter-value {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .worship-area {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+    
+    .zero-text {
+        font-size: 2.5rem;
+    }
+} 
