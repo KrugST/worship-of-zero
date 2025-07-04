@@ -51,6 +51,20 @@
                 <div class="counter-value" id="globalCounter">0</div>
                 <p class="counter-description">Total revolutions around the Sacred Zero</p>
             </div>
+            
+            <!-- Live User Counter -->
+            <div class="counter-card live-users">
+                <h2 class="counter-title">👥 Live Worshippers</h2>
+                <div class="counter-value" id="liveUserCounter">0</div>
+                <p class="counter-description">Currently orbiting the Sacred Zero</p>
+            </div>
+            
+            <!-- Total Visits Counter -->
+            <div class="counter-card total-visits">
+                <h2 class="counter-title">📈 Total Visits</h2>
+                <div class="counter-value" id="totalVisitsCounter">0</div>
+                <p class="counter-description">All-time visitors to the Sacred Zero</p>
+            </div>
         </div>
 
         <!-- Instructions -->
@@ -69,6 +83,7 @@
         <div class="notification" id="notification"></div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
 </html> 

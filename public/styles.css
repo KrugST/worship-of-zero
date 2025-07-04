@@ -175,7 +175,16 @@ body {
 .counter-section {
     margin: 40px 0;
     width: 100%;
-    max-width: 400px;
+    max-width: 800px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.counter-card {
+    flex: 1;
+    min-width: 300px;
 }
 
 .counter-card {
@@ -212,6 +221,46 @@ body {
 .counter-description {
     color: #a0a0a0;
     font-size: 0.9rem;
+}
+
+/* Live Users Counter */
+.live-users .counter-value {
+    color: #00ff88;
+    text-shadow: 0 0 20px #00ff88;
+}
+
+/* Total Visits Counter */
+.total-visits .counter-value {
+    color: #ff6b6b;
+    text-shadow: 0 0 20px #ff6b6b;
+}
+
+/* Other Worshippers */
+.other-worshipper {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    pointer-events: none;
+    z-index: 15;
+    transition: all 0.1s ease;
+}
+
+.other-worshipper .figure {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    opacity: 0.8;
+}
+
+/* Wider orbit path for multiple users */
+.orbit-path.wider {
+    width: 120%;
+    height: 120%;
+    margin-left: -10%;
+    margin-top: -10%;
+}
+
+.orbit-path.wider .orbit-circle {
+    r: 180;
 }
 
 /* Instructions */

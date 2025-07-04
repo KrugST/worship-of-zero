@@ -3,9 +3,12 @@ class NullismWorship {
         this.worshipper = document.getElementById('worshipper');
         this.sacredZero = document.getElementById('sacredZero');
         this.globalCounter = document.getElementById('globalCounter');
+        this.liveUserCounter = document.getElementById('liveUserCounter');
+        this.totalVisitsCounter = document.getElementById('totalVisitsCounter');
         this.notification = document.getElementById('notification');
         this.orbitProgress = document.getElementById('orbitProgress');
         this.progressText = document.getElementById('progressText');
+        this.orbitPath = document.querySelector('.orbit-path');
         
         // Orbit tracking
         this.orbitRadius = 150;
@@ -22,6 +25,10 @@ class NullismWorship {
         // Local storage for user's orbit count
         this.userOrbitCount = parseInt(localStorage.getItem('userOrbitCount')) || 0;
         
+        // Other worshippers tracking
+        this.otherWorshippers = new Map();
+        this.socket = null;
+        
         this.init();
     }
     
@@ -30,6 +37,7 @@ class NullismWorship {
         this.loadGlobalCounter();
         this.positionWorshipper();
         this.updateUserOrbitDisplay();
+        this.setupWebSocket();
         
         // Add some fun effects
         this.addSacredZeroEffects();
@@ -146,6 +154,11 @@ class NullismWorship {
         // Update display
         this.updateUserOrbitDisplay();
         
+        // Notify server about orbit completion
+        if (this.socket) {
+            this.socket.emit('orbitCompleted');
+        }
+        
         // Send to server
         try {
             const response = await fetch('/api/increment', {
@@ -226,6 +239,121 @@ class NullismWorship {
         this.notification.classList.add('show');
         
         // Remove the auto-hide timeout - messages will stay until new one arrives
+    }
+    
+    setupWebSocket() {
+        this.socket = io();
+        
+        this.socket.on('connect', () => {
+            console.log('🔗 Connected to server');
+        });
+        
+        this.socket.on('userCount', (count) => {
+            this.updateLiveUserCounter(count);
+            this.adjustOrbitPath(count);
+        });
+        
+        this.socket.on('totalVisits', (visits) => {
+            this.updateTotalVisitsCounter(visits);
+        });
+        
+        this.socket.on('usersData', (users) => {
+            this.createOtherWorshippers(users);
+        });
+        
+        this.socket.on('disconnect', () => {
+            console.log('🔌 Disconnected from server');
+        });
+    }
+    
+    updateLiveUserCounter(count) {
+        if (this.liveUserCounter) {
+            this.liveUserCounter.textContent = count;
+        }
+    }
+    
+    updateTotalVisitsCounter(visits) {
+        if (this.totalVisitsCounter) {
+            this.totalVisitsCounter.textContent = visits.toLocaleString();
+        }
+    }
+    
+    adjustOrbitPath(userCount) {
+        if (userCount > 5) {
+            this.orbitPath.classList.add('wider');
+            this.orbitRadius = 180;
+        } else {
+            this.orbitPath.classList.remove('wider');
+            this.orbitRadius = 150;
+        }
+        this.positionWorshipper();
+    }
+    
+    createOtherWorshippers(users) {
+        // Clear existing worshippers
+        this.otherWorshippers.forEach((worshipper, id) => {
+            worshipper.element.remove();
+        });
+        this.otherWorshippers.clear();
+        
+        // Create new worshippers
+        users.forEach(user => {
+            if (user.socketId !== this.socket.id) {
+                this.createWorshipper(user);
+            }
+        });
+    }
+    
+    createWorshipper(userData) {
+        const worshipper = document.createElement('div');
+        worshipper.className = 'other-worshipper';
+        worshipper.innerHTML = '<div class="figure">🧍</div>';
+        
+        // Position the worshipper
+        const x = this.centerX + this.orbitRadius * Math.cos(userData.position);
+        const y = this.centerY + this.orbitRadius * Math.sin(userData.position);
+        worshipper.style.left = `${x - 15}px`;
+        worshipper.style.top = `${y - 15}px`;
+        
+        this.orbitPath.appendChild(worshipper);
+        
+        // Store worshipper data
+        this.otherWorshippers.set(userData.socketId, {
+            element: worshipper,
+            data: userData
+        });
+        
+        // Start animation
+        this.animateWorshipper(userData.socketId);
+    }
+    
+    animateWorshipper(socketId) {
+        const worshipper = this.otherWorshippers.get(socketId);
+        if (!worshipper) return;
+        
+        const animate = () => {
+            if (!this.otherWorshippers.has(socketId)) return;
+            
+            // Update position
+            worshipper.data.position += worshipper.data.speed * worshipper.data.direction;
+            
+            // Wrap around
+            if (worshipper.data.position >= 2 * Math.PI) {
+                worshipper.data.position = 0;
+            } else if (worshipper.data.position < 0) {
+                worshipper.data.position = 2 * Math.PI;
+            }
+            
+            // Update visual position
+            const x = this.centerX + this.orbitRadius * Math.cos(worshipper.data.position);
+            const y = this.centerY + this.orbitRadius * Math.sin(worshipper.data.position);
+            worshipper.element.style.left = `${x - 15}px`;
+            worshipper.element.style.top = `${y - 15}px`;
+            
+            requestAnimationFrame(animate);
+        };
+        
+        animate();
     }
     
     addSacredZeroEffects() {
