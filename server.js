@@ -10,8 +10,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
+        origin: process.env.NODE_ENV === 'production' ? [
+            'https://*.ondigitalocean.app',
+            'https://worshipthezero.com',
+            'https://www.worshipthezero.com'
+        ] : "*",
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 const PORT = process.env.PORT || 3000;
@@ -20,6 +25,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+
+// Trust proxy for DigitalOcean App Platform
+app.set('trust proxy', true);
 
 // Global counter management with file-based persistence
 const COUNTER_FILE = '.orbit_counter';
