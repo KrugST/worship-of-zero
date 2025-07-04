@@ -55,14 +55,16 @@ class NullismWorship {
         this.isDragging = true;
         this.worshipper.style.cursor = 'grabbing';
         
+        // Store the initial mouse position relative to the figure
         const rect = this.worshipper.parentElement.getBoundingClientRect();
         const clientX = e.clientX || e.touches[0].clientX;
         const clientY = e.clientY || e.touches[0].clientY;
         
-        const x = clientX - rect.left - this.centerX;
-        const y = clientY - rect.top - this.centerY;
+        this.dragOffsetX = clientX - rect.left - this.centerX;
+        this.dragOffsetY = clientY - rect.top - this.centerY;
         
-        this.startAngle = Math.atan2(y, x);
+        // Calculate the angle from center to mouse position
+        this.startAngle = Math.atan2(this.dragOffsetY, this.dragOffsetX);
         this.lastAngle = this.currentAngle;
     }
     
@@ -74,30 +76,38 @@ class NullismWorship {
         const clientX = e.clientX || e.touches[0].clientX;
         const clientY = e.clientY || e.touches[0].clientY;
         
+        // Calculate the angle from center to current mouse position
         const x = clientX - rect.left - this.centerX;
         const y = clientY - rect.top - this.centerY;
+        const newAngle = Math.atan2(y, x);
         
-        const angle = Math.atan2(y, x);
-        const deltaAngle = angle - this.startAngle;
+        // Calculate the angle change from the previous position
+        let angleChange = newAngle - this.currentAngle;
         
         // Handle angle wrapping for smooth continuous rotation
-        if (deltaAngle > Math.PI) {
-            this.startAngle += 2 * Math.PI;
-        } else if (deltaAngle < -Math.PI) {
-            this.startAngle -= 2 * Math.PI;
+        if (angleChange > Math.PI) {
+            angleChange -= 2 * Math.PI;
+        } else if (angleChange < -Math.PI) {
+            angleChange += 2 * Math.PI;
         }
         
         // Update current angle for visual positioning
-        this.currentAngle = this.lastAngle + (angle - this.startAngle);
+        this.currentAngle = newAngle;
         
-        // Update orbit progress
-        this.updateOrbitProgress();
+        // Update orbit progress with the angle change
+        this.orbitProgressValue += Math.abs(angleChange);
+        
+        // Handle orbit completion
+        if (this.orbitProgressValue >= 2 * Math.PI) {
+            this.completeOrbit();
+            this.orbitProgressValue = 0; // Reset for next orbit
+        }
+        
+        // Update progress indicator
+        const progressPercent = (this.orbitProgressValue / (2 * Math.PI)) * 100;
+        this.updateProgressIndicator(progressPercent);
         
         this.positionWorshipper();
-        this.checkOrbitCompletion();
-        
-        // Update last angle for next frame
-        this.lastAngle = this.currentAngle;
     }
     
     endDrag() {
@@ -113,28 +123,8 @@ class NullismWorship {
         this.worshipper.style.top = `${y - 20}px`;
     }
     
-    updateOrbitProgress() {
-        // Calculate the angle change since last frame
-        const angleChange = this.currentAngle - this.lastAngle;
-        
-        // Update orbit progress (accumulate angle changes)
-        this.orbitProgressValue += angleChange;
-        
-        // Handle orbit completion
-        if (this.orbitProgressValue >= 2 * Math.PI) {
-            this.completeOrbit();
-            this.orbitProgressValue = 0; // Reset for next orbit
-        } else if (this.orbitProgressValue < 0) {
-            this.orbitProgressValue = 0; // Don't go negative
-        }
-        
-        // Update progress indicator
-        const progressPercent = (this.orbitProgressValue / (2 * Math.PI)) * 100;
-        this.updateProgressIndicator(progressPercent);
-    }
-    
     checkOrbitCompletion() {
-        // This is now handled in updateOrbitProgress()
+        // This is now handled directly in the drag method
     }
     
     updateProgressIndicator(progress) {
