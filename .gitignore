@@ -1,5 +1,13 @@
+# Nullism Website Data Files
 .orbit_counter
 .total_visits
+
+# Environment files (except example)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
 logs
