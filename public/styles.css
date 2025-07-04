@@ -250,7 +250,23 @@ body {
     font-size: 1.5rem;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
     opacity: 0.8;
+    transition: opacity 0.3s ease;
 }
+
+.other-worshipper.stationary .figure {
+    animation: stationaryGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes stationaryGlow {
+    0% {
+        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+    }
+    100% {
+        filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+    }
+}
+
+
 
 /* Wider orbit path for multiple users */
 .orbit-path.wider {

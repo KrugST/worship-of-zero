@@ -95,6 +95,42 @@ let isUpdating = false;
 let connectedUsers = new Map(); // socketId -> userData
 let userCounter = 0;
 
+// Function to get random worshipper icon (focusing on boys and girls)
+function getRandomWorshipperIcon() {
+    const icons = [
+        // Boys and Girls (primary focus)
+        '👦', '👧', '👨', '👩', '🧍‍♂️', '🧍‍♀️',
+        // Children and teens
+        '👶', '👨‍🦰', '👩‍🦰', '👨‍🦱', '👩‍🦱',
+        // Adults with different characteristics
+        '👨‍🦲', '👩‍🦲', '👨‍🦳', '👩‍🦳', '👴', '👵',
+        // Generic people
+        '🧍', '👤', '👥'
+    ];
+    return icons[Math.floor(Math.random() * icons.length)];
+}
+
+// Function to get random worshipper behavior
+function getRandomWorshipperBehavior() {
+    const behaviors = [
+        { type: 'moving', speed: 0.02 + Math.random() * 0.03, direction: Math.random() > 0.5 ? 1 : -1 },
+        { type: 'moving', speed: 0.01 + Math.random() * 0.02, direction: Math.random() > 0.5 ? 1 : -1 },
+        { type: 'moving', speed: 0.03 + Math.random() * 0.04, direction: Math.random() > 0.5 ? 1 : -1 },
+        { type: 'stationary', speed: 0, direction: 0 },
+        { type: 'intermittent', speed: 0.015 + Math.random() * 0.025, direction: Math.random() > 0.5 ? 1 : -1 }
+    ];
+    return behaviors[Math.floor(Math.random() * behaviors.length)];
+}
+
+// Function to send only connected users as worshippers
+function sendWorshippers() {
+    const userCount = connectedUsers.size;
+    const allWorshippers = Array.from(connectedUsers.values());
+    
+    console.log(`👥 Sending ${allWorshippers.length} real worshippers to clients`);
+    io.emit('usersData', allWorshippers);
+}
+
 // Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -186,8 +222,8 @@ io.on('connection', (socket) => {
         socketId: socket.id,
         connectedAt: new Date(),
         position: Math.random() * 2 * Math.PI, // Random starting position
-        speed: 0.02 + Math.random() * 0.03, // Random walking speed
-        direction: Math.random() > 0.5 ? 1 : -1 // Random direction
+        icon: getRandomWorshipperIcon(), // Random worshipper icon
+        ...getRandomWorshipperBehavior() // Random behavior (speed, direction, type)
     };
     
     connectedUsers.set(socket.id, userData);
@@ -201,10 +237,16 @@ io.on('connection', (socket) => {
     // Send current users data to new client
     socket.emit('usersData', Array.from(connectedUsers.values()));
     
+    // Send updated worshipper list to all clients
+    sendWorshippers();
+    
     socket.on('disconnect', () => {
         connectedUsers.delete(socket.id);
         console.log(`👤 User ${userId} disconnected. Total users: ${connectedUsers.size}, Total visits: ${totalVisits}`);
         io.emit('userCount', connectedUsers.size);
+        
+        // Send updated worshipper list when users disconnect
+        sendWorshippers();
     });
     
     socket.on('orbitCompleted', () => {
@@ -224,4 +266,6 @@ server.listen(PORT, () => {
     console.log(`👥 Live user tracking enabled`);
     console.log(`🔧 To set initial counter: GLOBAL_ORBIT_COUNTER=123 npm start`);
     console.log(`🔧 To set initial visits: TOTAL_VISITS=456 npm start`);
+    
+    // Note: Removed periodic regeneration to prevent worshipper accumulation
 }); 

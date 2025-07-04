@@ -351,7 +351,15 @@ class NullismWorship {
     createWorshipper(userData) {
         const worshipper = document.createElement('div');
         worshipper.className = 'other-worshipper';
-        worshipper.innerHTML = '<div class="figure">🧍</div>';
+        
+        // Add behavior-specific class
+        if (userData.type === 'stationary') {
+            worshipper.classList.add('stationary');
+        }
+        
+        // Use the random icon from server data, or default to a person emoji
+        const icon = userData.icon || '👤';
+        worshipper.innerHTML = `<div class="figure">${icon}</div>`;
         
         // Position the worshipper
         const x = this.centerX + this.orbitRadius * Math.cos(userData.position);
@@ -376,17 +384,45 @@ class NullismWorship {
         const worshipper = this.otherWorshippers.get(socketId);
         if (!worshipper) return;
         
+        let isMoving = true;
+        let stopStartTime = 0;
+        const stopDuration = 2000 + Math.random() * 3000; // 2-5 seconds stop
+        
         const animate = () => {
             if (!this.otherWorshippers.has(socketId)) return;
             
-            // Update position
-            worshipper.data.position += worshipper.data.speed * worshipper.data.direction;
+            const now = Date.now();
             
-            // Wrap around
-            if (worshipper.data.position >= 2 * Math.PI) {
-                worshipper.data.position = 0;
-            } else if (worshipper.data.position < 0) {
-                worshipper.data.position = 2 * Math.PI;
+            // Handle different behavior types
+            if (worshipper.data.type === 'stationary') {
+                // Stationary worshipper - don't move
+                isMoving = false;
+            } else if (worshipper.data.type === 'intermittent') {
+                // Intermittent worshipper - stop and go
+                if (isMoving) {
+                    // Currently moving, check if should stop
+                    if (Math.random() < 0.001) { // 0.1% chance per frame to stop
+                        isMoving = false;
+                        stopStartTime = now;
+                    }
+                } else {
+                    // Currently stopped, check if should start moving
+                    if (now - stopStartTime > stopDuration) {
+                        isMoving = true;
+                    }
+                }
+            }
+            
+            // Update position only if moving
+            if (isMoving && worshipper.data.speed > 0) {
+                worshipper.data.position += worshipper.data.speed * worshipper.data.direction;
+                
+                // Wrap around
+                if (worshipper.data.position >= 2 * Math.PI) {
+                    worshipper.data.position = 0;
+                } else if (worshipper.data.position < 0) {
+                    worshipper.data.position = 2 * Math.PI;
+                }
             }
             
             // Update visual position
@@ -395,6 +431,13 @@ class NullismWorship {
             const offset = 15; // Fixed offset for other worshippers
             worshipper.element.style.left = `${x - offset}px`;
             worshipper.element.style.top = `${y - offset}px`;
+            
+            // Add visual feedback for stopped worshippers
+            if (!isMoving) {
+                worshipper.element.style.opacity = '0.6';
+            } else {
+                worshipper.element.style.opacity = '0.8';
+            }
             
             requestAnimationFrame(animate);
         };
