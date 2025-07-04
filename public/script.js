@@ -225,9 +225,7 @@ class NullismWorship {
         this.notification.textContent = message;
         this.notification.classList.add('show');
         
-        setTimeout(() => {
-            this.notification.classList.remove('show');
-        }, 3000);
+        // Remove the auto-hide timeout - messages will stay until new one arrives
     }
     
     addSacredZeroEffects() {
