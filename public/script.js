@@ -6,14 +6,16 @@ class NullismWorship {
         this.liveUserCounter = document.getElementById('liveUserCounter');
         this.totalVisitsCounter = document.getElementById('totalVisitsCounter');
         this.notification = document.getElementById('notification');
+        this.notificationText = document.querySelector('.notification-text');
+        this.notificationClose = document.getElementById('notificationClose');
         this.orbitProgress = document.getElementById('orbitProgress');
         this.progressText = document.getElementById('progressText');
         this.orbitPath = document.querySelector('.orbit-path');
         
-        // Orbit tracking
-        this.orbitRadius = 150;
-        this.centerX = 200;
-        this.centerY = 200;
+        // Orbit tracking - will be calculated dynamically
+        this.orbitRadius = 0;
+        this.centerX = 0;
+        this.centerY = 0;
         this.currentAngle = 0;
         this.startAngle = 0;
         this.totalRotations = 0;
@@ -35,12 +37,41 @@ class NullismWorship {
     init() {
         this.setupEventListeners();
         this.loadGlobalCounter();
+        this.calculateOrbitDimensions();
         this.positionWorshipper();
         this.updateUserOrbitDisplay();
         this.setupWebSocket();
         
         // Add some fun effects
         this.addSacredZeroEffects();
+        
+        // Setup notification close button
+        if (this.notificationClose) {
+            this.notificationClose.addEventListener('click', () => {
+                this.hideNotification();
+            });
+        }
+        
+        // Recalculate on window resize
+        window.addEventListener('resize', () => {
+            this.calculateOrbitDimensions();
+            this.positionWorshipper();
+        });
+    }
+    
+    calculateOrbitDimensions() {
+        const worshipArea = this.worshipper.parentElement;
+        const rect = worshipArea.getBoundingClientRect();
+        
+        // Calculate center of the worship area
+        this.centerX = rect.width / 2;
+        this.centerY = rect.height / 2;
+        
+        // Calculate orbit radius based on screen size
+        const baseRadius = Math.min(rect.width, rect.height) * 0.375; // 37.5% of the smaller dimension
+        this.orbitRadius = Math.max(baseRadius, 100); // Minimum radius of 100px
+        
+        console.log(`📱 Orbit dimensions: center(${this.centerX}, ${this.centerY}), radius: ${this.orbitRadius}`);
     }
     
     setupEventListeners() {
@@ -127,8 +158,11 @@ class NullismWorship {
         const x = this.centerX + this.orbitRadius * Math.cos(this.currentAngle);
         const y = this.centerY + this.orbitRadius * Math.sin(this.currentAngle);
         
-        this.worshipper.style.left = `${x - 20}px`;
-        this.worshipper.style.top = `${y - 20}px`;
+        // Calculate offset based on worshipper size
+        const offset = this.worshipper.offsetWidth / 2;
+        
+        this.worshipper.style.left = `${x - offset}px`;
+        this.worshipper.style.top = `${y - offset}px`;
     }
     
     checkOrbitCompletion() {
@@ -235,10 +269,17 @@ class NullismWorship {
     }
     
     showNotification(message) {
-        this.notification.textContent = message;
-        this.notification.classList.add('show');
+        // Small delay to ensure smooth animation on mobile
+        setTimeout(() => {
+            this.notificationText.textContent = message;
+            this.notification.classList.add('show');
+        }, 50);
         
         // Remove the auto-hide timeout - messages will stay until new one arrives
+    }
+    
+    hideNotification() {
+        this.notification.classList.remove('show');
     }
     
     setupWebSocket() {
@@ -281,10 +322,13 @@ class NullismWorship {
     adjustOrbitPath(userCount) {
         if (userCount > 5) {
             this.orbitPath.classList.add('wider');
-            this.orbitRadius = 180;
+            // Recalculate dimensions for wider path
+            this.calculateOrbitDimensions();
+            // Increase radius by 20% for wider path
+            this.orbitRadius *= 1.2;
         } else {
             this.orbitPath.classList.remove('wider');
-            this.orbitRadius = 150;
+            this.calculateOrbitDimensions();
         }
         this.positionWorshipper();
     }
@@ -312,8 +356,9 @@ class NullismWorship {
         // Position the worshipper
         const x = this.centerX + this.orbitRadius * Math.cos(userData.position);
         const y = this.centerY + this.orbitRadius * Math.sin(userData.position);
-        worshipper.style.left = `${x - 15}px`;
-        worshipper.style.top = `${y - 15}px`;
+        const offset = 15; // Fixed offset for other worshippers
+        worshipper.style.left = `${x - offset}px`;
+        worshipper.style.top = `${y - offset}px`;
         
         this.orbitPath.appendChild(worshipper);
         
@@ -347,8 +392,9 @@ class NullismWorship {
             // Update visual position
             const x = this.centerX + this.orbitRadius * Math.cos(worshipper.data.position);
             const y = this.centerY + this.orbitRadius * Math.sin(worshipper.data.position);
-            worshipper.element.style.left = `${x - 15}px`;
-            worshipper.element.style.top = `${y - 15}px`;
+            const offset = 15; // Fixed offset for other worshippers
+            worshipper.element.style.left = `${x - offset}px`;
+            worshipper.element.style.top = `${y - offset}px`;
             
             requestAnimationFrame(animate);
         };

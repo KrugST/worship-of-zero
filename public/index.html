@@ -77,14 +77,13 @@
             </div>
         </div>
 
-        <!-- Instructions -->
-        <div class="instructions">
-            <p>🔄 Drag the figure around the circle to complete an orbit</p>
-            <p>✨ Each full revolution contributes to the global count</p>
-        </div>
+
 
         <!-- Notification -->
-        <div class="notification" id="notification"></div>
+        <div class="notification" id="notification">
+            <span class="notification-text"></span>
+            <button class="notification-close" id="notificationClose">×</button>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>

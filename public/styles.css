@@ -54,9 +54,10 @@ body {
 /* Worship Area */
 .worship-area {
     position: relative;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     height: 400px;
-    margin: 40px 0;
+    margin: 40px auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -263,17 +264,19 @@ body {
     r: 180;
 }
 
-/* Instructions */
-.instructions {
-    text-align: center;
-    margin: 30px 0;
-    color: #a0a0a0;
-    font-size: 0.9rem;
+@media (max-width: 768px) {
+    .orbit-path.wider .orbit-circle {
+        r: 135; /* 75% of 180 for mobile */
+    }
 }
 
-.instructions p {
-    margin: 5px 0;
+@media (max-width: 480px) {
+    .orbit-path.wider .orbit-circle {
+        r: 112; /* 75% of 150 for small mobile */
+    }
 }
+
+
 
 /* Progress Section */
 .progress-section {
@@ -340,10 +343,73 @@ body {
     transition: transform 0.3s ease;
     z-index: 1000;
     box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+    max-width: 300px;
+    word-wrap: break-word;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-text {
+    flex: 1;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.notification-close:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .notification.show {
     transform: translateX(0);
+}
+
+/* Mobile notification positioning */
+@media (max-width: 768px) {
+    .notification {
+        top: 80px; /* Move below the header */
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        transform: translateY(-100px);
+        text-align: center;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .notification.show {
+        transform: translateY(0);
+    }
+    
+    .notification-close {
+        font-size: 1rem;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification {
+        top: 70px;
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
 }
 
 /* Responsive Design */
@@ -353,7 +419,8 @@ body {
     }
     
     .worship-area {
-        width: 300px;
+        width: 100%;
+        max-width: 300px;
         height: 300px;
     }
     
@@ -369,11 +436,23 @@ body {
     .counter-value {
         font-size: 2.5rem;
     }
+    
+    .counter-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .counter-card {
+        min-width: 250px;
+        width: 100%;
+        max-width: 300px;
+    }
 }
 
 @media (max-width: 480px) {
     .worship-area {
-        width: 250px;
+        width: 100%;
+        max-width: 250px;
         height: 250px;
     }
     
@@ -383,5 +462,19 @@ body {
     
     .zero-text {
         font-size: 2.5rem;
+    }
+    
+    .progress-indicator {
+        padding: 15px 20px;
+        gap: 10px;
+    }
+    
+    .progress-bar {
+        height: 10px;
+    }
+    
+    .progress-text {
+        font-size: 1rem;
+        min-width: 40px;
     }
 } 
