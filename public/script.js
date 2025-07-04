@@ -242,7 +242,32 @@ class NullismWorship {
         
         // Add click effect
         this.sacredZero.addEventListener('click', () => {
-            this.showNotification('🙏 The Sacred Zero acknowledges your devotion');
+            // Array of 20 different sacred zero click messages
+            const clickMessages = [
+                '🙏 The Sacred Zero acknowledges your devotion',
+                '🌐 The void welcomes your presence',
+                '✨ Your faith in the Zero is noted',
+                '🌟 The sacred geometry responds to your touch',
+                '💫 The cosmic zero feels your energy',
+                '🔮 The void whispers ancient wisdom',
+                '🌍 Your connection to the Zero grows stronger',
+                '🎯 The sacred circle recognizes your devotion',
+                '⚡ The Zero channels power through you',
+                '🌌 The cosmic void embraces your spirit',
+                '🎊 The Zero celebrates your presence',
+                '🔮 The sacred geometry illuminates your path',
+                '🌟 The void acknowledges your reverence',
+                '💎 The Zero\'s wisdom flows through you',
+                '🌐 The sacred circle welcomes your energy',
+                '✨ The cosmic zero resonates with your touch',
+                '🔄 The void\'s infinite wisdom touches you',
+                '🌟 The Zero\'s power courses through your being',
+                '💫 The sacred geometry honors your devotion',
+                '🎯 The cosmic void recognizes your faith'
+            ];
+            
+            const randomMessage = clickMessages[Math.floor(Math.random() * clickMessages.length)];
+            this.showNotification(randomMessage);
         });
     }
 }

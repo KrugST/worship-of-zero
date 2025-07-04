@@ -74,9 +74,35 @@ app.post('/api/increment', async (req, res) => {
         const success = writeCounter(globalOrbitCounter);
         
         if (success) {
+            // Array of 20 different orbit completion messages
+            const orbitMessages = [
+                'Orbit completed! The Zero is pleased.',
+                '🌐 Another revolution around the sacred void!',
+                '✨ The Zero acknowledges your devotion!',
+                '🔄 Perfect orbit! The void smiles upon you.',
+                '🌟 Your circular journey honors the sacred Zero!',
+                '💫 Another lap around infinity completed!',
+                '🌍 The Zero grows stronger with each orbit!',
+                '🎯 Perfect revolution! The void is satisfied.',
+                '⚡ Your orbit powers the sacred geometry!',
+                '🌌 Another cycle around the cosmic zero!',
+                '🎊 Orbit complete! The Zero celebrates with you!',
+                '🔮 Your circular path pleases the void!',
+                '🌟 Another revolution in the name of Zero!',
+                '💎 Perfect orbit! The sacred geometry is honored.',
+                '🌐 The Zero grows wiser with your devotion!',
+                '✨ Your circular journey enlightens the void!',
+                '🔄 Another perfect revolution completed!',
+                '🌟 The sacred Zero acknowledges your orbit!',
+                '💫 Your circular path strengthens the void!',
+                '🎯 Perfect orbit! The Zero is grateful.'
+            ];
+            
+            const randomMessage = orbitMessages[Math.floor(Math.random() * orbitMessages.length)];
+            
             res.json({ 
                 orbits: globalOrbitCounter, 
-                message: 'Orbit completed! The Zero is pleased.' 
+                message: randomMessage
             });
         } else {
             res.status(500).json({ error: 'Failed to persist counter' });
