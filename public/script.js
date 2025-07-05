@@ -38,6 +38,7 @@ class NullismWorship {
         this.setupEventListeners();
         this.loadGlobalCounter();
         this.calculateOrbitDimensions();
+        this.updateOrbitCircle();
         this.positionWorshipper();
         this.updateUserOrbitDisplay();
         this.setupWebSocket();
@@ -55,6 +56,7 @@ class NullismWorship {
         // Recalculate on window resize
         window.addEventListener('resize', () => {
             this.calculateOrbitDimensions();
+            this.updateOrbitCircle();
             this.positionWorshipper();
         });
     }
@@ -62,6 +64,9 @@ class NullismWorship {
     calculateOrbitDimensions() {
         const worshipArea = this.worshipper.parentElement;
         const rect = worshipArea.getBoundingClientRect();
+        
+        // Check if orbit path is wider (more than 5 users)
+        const isWider = this.orbitPath.classList.contains('wider');
         
         // Calculate center of the worship area
         this.centerX = rect.width / 2;
@@ -71,7 +76,16 @@ class NullismWorship {
         const baseRadius = Math.min(rect.width, rect.height) * 0.375; // 37.5% of the smaller dimension
         this.orbitRadius = Math.max(baseRadius, 100); // Minimum radius of 100px
         
-        console.log(`📱 Orbit dimensions: center(${this.centerX}, ${this.centerY}), radius: ${this.orbitRadius}`);
+        // If orbit path is wider, adjust for the CSS scaling
+        if (isWider) {
+            // The CSS makes the orbit path 120% with -10% margins, so we need to adjust
+            // The effective center and radius should account for this scaling
+            this.centerX = rect.width / 2;
+            this.centerY = rect.height / 2;
+            // The radius is already increased by 1.2 in adjustOrbitPath, so we don't need to adjust it here
+        }
+        
+        console.log(`📱 Orbit dimensions: center(${this.centerX}, ${this.centerY}), radius: ${this.orbitRadius}, wider: ${isWider}`);
     }
     
     setupEventListeners() {
@@ -163,6 +177,28 @@ class NullismWorship {
         
         this.worshipper.style.left = `${x - offset}px`;
         this.worshipper.style.top = `${y - offset}px`;
+    }
+    
+    repositionOtherWorshippers() {
+        // Reposition all other worshippers with the new orbit radius
+        this.otherWorshippers.forEach((worshipper, socketId) => {
+            const x = this.centerX + this.orbitRadius * Math.cos(worshipper.data.position);
+            const y = this.centerY + this.orbitRadius * Math.sin(worshipper.data.position);
+            const offset = 15; // Fixed offset for other worshippers
+            worshipper.element.style.left = `${x - offset}px`;
+            worshipper.element.style.top = `${y - offset}px`;
+        });
+    }
+    
+    updateOrbitCircle() {
+        // Update the SVG circle radius to match the current orbit radius
+        const orbitCircle = this.orbitPath.querySelector('.orbit-circle');
+        if (orbitCircle) {
+            // Simple proportion: if orbit radius increases by 20%, SVG radius should too
+            const isWider = this.orbitPath.classList.contains('wider');
+            const svgRadius = isWider ? 180 : 150; // 150 * 1.2 = 180
+            orbitCircle.setAttribute('r', svgRadius.toString());
+        }
     }
     
     checkOrbitCompletion() {
@@ -330,7 +366,13 @@ class NullismWorship {
             this.orbitPath.classList.remove('wider');
             this.calculateOrbitDimensions();
         }
+        
+        // Update the SVG circle radius to match
+        this.updateOrbitCircle();
+        
+        // Reposition all worshippers after orbit adjustment
         this.positionWorshipper();
+        this.repositionOtherWorshippers();
     }
     
     createOtherWorshippers(users) {

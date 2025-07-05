@@ -270,27 +270,15 @@ body {
 
 /* Wider orbit path for multiple users */
 .orbit-path.wider {
-    width: 120%;
-    height: 120%;
-    margin-left: -10%;
-    margin-top: -10%;
+    /* Remove the offset that was causing positioning issues */
+    /* The JavaScript will handle the radius increase instead */
 }
 
 .orbit-path.wider .orbit-circle {
-    r: 180;
+    /* Let JavaScript handle the radius dynamically */
 }
 
-@media (max-width: 768px) {
-    .orbit-path.wider .orbit-circle {
-        r: 135; /* 75% of 180 for mobile */
-    }
-}
-
-@media (max-width: 480px) {
-    .orbit-path.wider .orbit-circle {
-        r: 112; /* 75% of 150 for small mobile */
-    }
-}
+/* Mobile responsive adjustments are now handled by JavaScript */
 
 
 
